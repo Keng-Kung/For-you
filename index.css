@@ -558,7 +558,7 @@
         }
 #place2 {
 			width: 80%;
-			height: 500px;
+			height: 100%;
             object-fit: cover;
 			vertical-align: middle;
 			border: 2px solid rgba(255, 255, 255, .85);
