@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#dcebd2">
+	<title>Happy Birthday, To Llewella</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			color-scheme: light;
+			--sage: #dcebd2;
+			--sage-deep: #9bbd98;
+			--pink: #ef9eaf;
+			--pink-deep: #df8098;
+			--cream: #fffaf0;
+			--ink: #65545c;
+			--lavender: #e8def2;
+			--blue: #d9eaf0;
+		}
+
+		* { box-sizing: border-box; }
+
+		html { min-width: 320px; min-height: 100%; }
+
+		body {
+			min-height: 100svh;
+			margin: 0;
+			overflow-x: hidden;
+			color: var(--ink);
+			font-family: "Poppins", "Trebuchet MS", sans-serif;
+			background:
+				radial-gradient(ellipse at 13% 18%, rgba(255, 255, 255, .64), transparent 32%),
+				radial-gradient(ellipse at 91% 78%, rgba(232, 222, 242, .57), transparent 31%),
+				linear-gradient(142deg, #e5efd9 0%, #d8e9d4 52%, #deebdf 100%);
+		}
+
+		button { font: inherit; }
+
+		.page {
+			position: relative;
+			display: grid;
+			min-height: 100svh;
+			place-items: center;
+			isolation: isolate;
+			padding: 35px 20px 28px;
+			overflow: hidden;
+		}
+
+		.page::before,
+		.page::after {
+			position: absolute;
+			z-index: -1;
+			width: min(42vw, 370px);
+			aspect-ratio: 1;
+			content: "";
+			border: 1px solid rgba(255, 255, 255, .38);
+			border-radius: 50%;
+			pointer-events: none;
+		}
+
+		.page::before { top: -220px; left: -140px; box-shadow: 0 0 0 28px rgba(255,255,255,.08), 0 0 0 58px rgba(255,255,255,.06); }
+		.page::after { right: -150px; bottom: -245px; box-shadow: 0 0 0 34px rgba(255,255,255,.08), 0 0 0 70px rgba(255,255,255,.05); }
+
+		.ambient,
+		.celebration {
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			overflow: hidden;
+			pointer-events: none;
+		}
+
+		.floaty {
+			position: absolute;
+			bottom: -36px;
+			color: rgba(226, 131, 156, .45);
+			animation: drift-up var(--duration, 12s) linear infinite;
+			animation-delay: var(--delay, 0s);
+			opacity: 0;
+			user-select: none;
+		}
+
+		.sparkle {
+			position: absolute;
+			color: rgba(255, 255, 255, .94);
+			text-shadow: 0 0 9px rgba(255, 255, 255, .85);
+			animation: twinkle 2.7s ease-in-out infinite;
+			animation-delay: var(--delay, 0s);
+		}
+
+		.card {
+			position: relative;
+			z-index: 1;
+			display: flex;
+			width: min(100%, 560px);
+			min-height: min(690px, calc(100svh - 58px));
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 20px 12px 12px;
+			text-align: center;
+			transition: opacity .75s ease, transform .85s cubic-bezier(.2,.72,.25,1);
+		}
+
+		.eyebrow {
+			margin: 0 0 8px;
+			color: #879c7e;
+			font-size: .68rem;
+			font-weight: 500;
+			letter-spacing: .16em;
+			text-transform: uppercase;
+		}
+
+		h1 {
+			margin: 0;
+			color: #765968;
+			font-family: "Dancing Script", "Brush Script MT", cursive;
+			font-size: clamp(2.5rem, 8vw, 4rem);
+			font-weight: 600;
+			line-height: 1.12;
+		}
+
+		.subtitle {
+			margin: 12px 0 0;
+			color: #81717a;
+			font-size: .94rem;
+			font-weight: 300;
+			line-height: 1.7;
+		}
+
+		.instruction {
+			margin: 17px 0 0;
+			color: #87977e;
+			font-size: .76rem;
+			line-height: 1.6;
+		}
+
+		/* Envelope layers stay clipped together until the flap opens. */
+		.envelope-wrap {
+			position: relative;
+			width: min(300px, 78vw);
+			height: 210px;
+			margin: 35px auto 0;
+			perspective: 1000px;
+			filter: drop-shadow(0 20px 20px rgba(106, 128, 100, .16));
+			transition: transform .8s ease, opacity .7s ease, filter .6s ease;
+		}
+
+		.envelope-wrap:hover { transform: translateY(-4px); filter: drop-shadow(0 23px 25px rgba(106, 128, 100, .22)); }
+
+		.envelope-button {
+			position: absolute;
+			inset: 0;
+			display: block;
+			width: 100%;
+			height: 100%;
+			padding: 0;
+			overflow: visible;
+			border: 0;
+			border-radius: 7px;
+			background: transparent;
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		.envelope-button:focus-visible,
+		.icon-button:focus-visible,
+		.action-button:focus-visible {
+			outline: 3px solid #c47791;
+			outline-offset: 5px;
+		}
+
+		.envelope-back {
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			overflow: hidden;
+			border-radius: 7px;
+			background: linear-gradient(145deg, #f8cbd2, #f5b9c5 75%);
+		}
+
+		.letter-peek {
+			position: absolute;
+			z-index: 2;
+			right: 10%;
+			bottom: 28px;
+			left: 10%;
+			height: 169px;
+			padding-top: 20px;
+			border: 1px solid rgba(228, 193, 168, .65);
+			border-radius: 3px 3px 0 0;
+			background: repeating-linear-gradient(0deg, #fffaf1 0 21px, #f4e9df 22px, #fffaf1 23px);
+			color: #d98ca2;
+			font-family: "Dancing Script", cursive;
+			font-size: 1.05rem;
+			transform: translateY(30px);
+			transition: transform .95s cubic-bezier(.16,.74,.25,1) .3s;
+		}
+
+		.letter-peek::before,
+		.letter-peek::after {
+			position: absolute;
+			top: 48px;
+			left: 20%;
+			width: 60%;
+			height: 1px;
+			content: "";
+			background: rgba(220, 159, 166, .35);
+			box-shadow: 0 14px rgba(220, 159, 166, .3), 0 28px rgba(220, 159, 166, .24);
+		}
+
+		.envelope-pocket {
+			position: absolute;
+			inset: 0;
+			z-index: 3;
+			border-radius: 7px;
+			background: linear-gradient(153deg, #f8c5ce 0 49.7%, transparent 50%), linear-gradient(27deg, #f2aebd 0 49.7%, transparent 50%), linear-gradient(90deg, #f6bdc9, #f3b3c0);
+			clip-path: polygon(0 0, 50% 48%, 100% 0, 100% 100%, 0 100%);
+		}
+
+		.envelope-front {
+			position: absolute;
+			inset: 0;
+			z-index: 4;
+			overflow: hidden;
+			border-radius: 7px;
+			background: linear-gradient(153deg, transparent 49.6%, rgba(255,255,255,.15) 50%, #f5b6c3 50.5%), linear-gradient(27deg, #f7c6cd 49.5%, transparent 50%, transparent);
+			clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+		}
+
+		.envelope-front::after {
+			position: absolute;
+			inset: 48% 0 0;
+			content: "";
+			background: linear-gradient(180deg, rgba(255, 224, 227, .15), #f1adbb);
+			clip-path: polygon(0 0, 50% 60%, 100% 0, 100% 100%, 0 100%);
+		}
+
+		.envelope-flap {
+			position: absolute;
+			inset: 0 0 auto;
+			z-index: 5;
+			height: 58%;
+			border-radius: 7px 7px 0 0;
+			background: linear-gradient(155deg, #f9d0d4, #ef9eaf);
+			clip-path: polygon(0 0, 100% 0, 50% 100%);
+			transform: rotateX(0deg);
+			transform-origin: 50% 0;
+			transition: transform .72s cubic-bezier(.2,.68,.25,1), z-index 0s linear .36s;
+			backface-visibility: hidden;
+		}
+
+		.seal {
+			position: absolute;
+			z-index: 6;
+			top: 55%;
+			left: 50%;
+			display: grid;
+			width: 39px;
+			aspect-ratio: 1;
+			place-items: center;
+			border: 1px solid rgba(255, 255, 255, .65);
+			border-radius: 50%;
+			background: #e990a7;
+			box-shadow: 0 3px 8px rgba(173, 93, 117, .24);
+			color: white;
+			font-size: 1.1rem;
+			transform: translate(-50%, -50%);
+			transition: opacity .3s ease, transform .4s ease;
+		}
+
+		.envelope-star {
+			position: absolute;
+			z-index: 7;
+			color: #fffdf3;
+			text-shadow: 0 0 8px rgba(255,255,255,.9);
+			pointer-events: none;
+			animation: twinkle 2.2s ease-in-out infinite;
+		}
+
+		.star-one { top: 15%; left: 18%; font-size: 1rem; }
+		.star-two { top: 36%; right: 17%; font-size: .75rem; animation-delay: .8s; }
+		.star-three { right: 29%; bottom: 13%; font-size: .68rem; animation-delay: 1.3s; }
+
+		.envelope-button:hover .seal { transform: translate(-50%, -50%) scale(1.12); }
+
+		.made-with-love {
+			position: absolute;
+			right: 10px;
+			bottom: 8px;
+			left: 10px;
+			color: #81917a;
+			font-family: "Dancing Script", cursive;
+			font-size: 1.1rem;
+			animation: gentle-pulse 2.8s ease-in-out infinite;
+		}
+
+		.sound-control {
+			position: fixed;
+			z-index: 20;
+			top: max(17px, env(safe-area-inset-top));
+			right: max(17px, env(safe-area-inset-right));
+		}
+
+		.icon-button {
+			display: inline-flex;
+			min-width: 42px;
+			min-height: 42px;
+			align-items: center;
+			justify-content: center;
+			gap: 7px;
+			padding: 8px 12px;
+			border: 1px solid rgba(255, 255, 255, .75);
+			border-radius: 999px;
+			background: rgba(255, 255, 255, .53);
+			box-shadow: 0 4px 14px rgba(93, 116, 89, .08);
+			color: #75616b;
+			cursor: pointer;
+			font-size: .72rem;
+			backdrop-filter: blur(8px);
+		}
+
+		/* The letter becomes a modal sheet after the envelope has had time to open. */
+		.letter-dialog {
+			position: fixed;
+			inset: 0;
+			z-index: 10;
+			display: grid;
+			place-items: center;
+			padding: 24px;
+			background: rgba(101, 104, 85, .18);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity .55s ease;
+		}
+
+		.letter-dialog[hidden] { display: none; }
+
+		.letter-sheet {
+			position: relative;
+			width: min(100%, 660px);
+			max-height: min(84svh, 900px);
+			overflow: auto;
+			overscroll-behavior: contain;
+			padding: clamp(27px, 5vw, 52px) clamp(23px, 7vw, 70px) 30px;
+			border: 1px solid #e8b5bd;
+			border-radius: 13px;
+			background-color: var(--cream);
+			background-image: radial-gradient(rgba(193, 155, 127, .1) .65px, transparent .65px), linear-gradient(115deg, rgba(255,255,255,.7), transparent 58%);
+			background-size: 7px 7px, auto;
+			box-shadow: 0 24px 80px rgba(84, 75, 74, .23), 0 0 34px rgba(244, 163, 183, .39);
+			text-align: left;
+			transform: translateY(32px) scale(.97);
+			transition: transform .7s cubic-bezier(.16,.74,.25,1), box-shadow .5s ease;
+		}
+
+		.letter-dialog.is-open { opacity: 1; pointer-events: auto; }
+		.letter-dialog.is-open .letter-sheet { transform: translateY(0) scale(1); }
+
+		.letter-topline {
+			margin: 0 0 9px;
+			color: #b18b8c;
+			font-size: .64rem;
+			font-weight: 500;
+			letter-spacing: .19em;
+			text-align: center;
+			text-transform: uppercase;
+		}
+
+		.letter-title {
+			min-height: 1.35em;
+			margin: 0 0 22px;
+			color: #805b69;
+			font-family: "Dancing Script", "Brush Script MT", cursive;
+			font-size: clamp(2.1rem, 7vw, 3.15rem);
+			font-weight: 600;
+			line-height: 1.2;
+			text-align: center;
+		}
+
+		.type-caret::after {
+			display: inline-block;
+			width: 1px;
+			height: .8em;
+			margin-left: 4px;
+			content: "";
+			background: #d88ca0;
+			vertical-align: -.02em;
+			animation: caret-blink .8s step-end infinite;
+		}
+
+		.letter-copy {
+			color: #65575a;
+			font-family: "Dancing Script", "Brush Script MT", cursive;
+			font-size: clamp(1.28rem, 3.4vw, 1.55rem);
+			font-weight: 500;
+			line-height: 1.58;
+		}
+
+		.letter-copy p {
+			margin: 0 0 15px;
+			animation: ink-appear .9s both;
+		}
+
+		.letter-copy p:nth-child(2) { animation-delay: .12s; }
+		.letter-copy p:nth-child(3) { animation-delay: .24s; }
+		.letter-copy p:nth-child(4) { animation-delay: .36s; }
+		.letter-copy p:nth-child(5) { animation-delay: .48s; }
+		.letter-copy p:nth-child(6) { animation-delay: .6s; }
+		.letter-copy p:nth-child(7) { animation-delay: .72s; }
+		.letter-copy p:nth-child(8) { animation-delay: .84s; }
+
+		.signoff { color: #885f6f; }
+
+		.surprise-message {
+			max-height: 0;
+			margin: 0;
+			overflow: hidden;
+			color: #bf6680;
+			font-family: "Dancing Script", cursive;
+			font-size: 1.65rem;
+			line-height: 1.45;
+			opacity: 0;
+			text-align: center;
+			transition: max-height .65s ease, opacity .55s ease, margin .55s ease;
+		}
+
+		.surprise-message.is-visible { max-height: 150px; margin: 17px 0 4px; opacity: 1; }
+
+		.letter-actions {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			margin-top: 22px;
+			padding-top: 18px;
+			border-top: 1px solid rgba(215, 171, 166, .48);
+		}
+
+		.action-button {
+			min-height: 42px;
+			padding: 10px 17px;
+			border: 1px solid #e7b0ba;
+			border-radius: 999px;
+			background: #fffdf7;
+			color: #865e6b;
+			cursor: pointer;
+			font-size: .78rem;
+			transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+		}
+
+		.action-button:hover { background: #fff0f2; box-shadow: 0 4px 13px rgba(203, 128, 149, .16); transform: translateY(-2px); }
+		.action-button.primary { border-color: #df91a5; background: #e99caf; color: white; }
+		.action-button.primary:hover { background: #df879e; }
+		.action-button:disabled { cursor: not-allowed; opacity: .62; transform: none; box-shadow: none; }
+
+		.modal-close {
+			position: sticky;
+			z-index: 1;
+			top: 0;
+			float: right;
+			margin: -22px -17px 0 0;
+			border-color: rgba(206, 151, 160, .45);
+			background: rgba(255, 250, 240, .88);
+			font-size: 1.1rem;
+			line-height: 1;
+		}
+
+		.celebration { z-index: 12; }
+
+		.celebration .floaty {
+			color: #e77d9c;
+			animation-name: burst-up;
+			animation-duration: var(--duration, 3.8s);
+			text-shadow: 0 0 9px rgba(255,255,255,.8);
+		}
+
+		body.is-open .card {
+			opacity: .16;
+			transform: translateY(14px) scale(.93);
+		}
+
+		body.is-open .envelope-flap { z-index: 2; transform: rotateX(180deg); }
+		body.is-open .letter-peek { transform: translateY(-85px); }
+		body.is-open .seal { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+		body.is-open .envelope-wrap { transform: translateY(12px) scale(.94); filter: drop-shadow(0 10px 14px rgba(106, 128, 100, .1)) drop-shadow(0 0 18px rgba(242, 142, 168, .48)); }
+
+		@keyframes drift-up {
+			0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-10deg); }
+			12% { opacity: .65; }
+			78% { opacity: .5; }
+			100% { opacity: 0; transform: translate3d(var(--sway, 22px), -115svh, 0) rotate(28deg); }
+		}
+
+		@keyframes burst-up {
+			0% { opacity: 0; transform: translate3d(0, 10px, 0) scale(.45) rotate(-15deg); }
+			18% { opacity: 1; }
+			100% { opacity: 0; transform: translate3d(var(--sway, 20px), -78vh, 0) scale(1.2) rotate(24deg); }
+		}
+
+		@keyframes twinkle {
+			0%, 100% { opacity: .46; transform: scale(.78) rotate(0); }
+			50% { opacity: 1; transform: scale(1.18) rotate(16deg); }
+		}
+
+		@keyframes gentle-pulse {
+			0%, 100% { opacity: .72; }
+			50% { opacity: 1; }
+		}
+
+		@keyframes ink-appear {
+			from { opacity: 0; transform: translateY(8px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		@keyframes caret-blink { 50% { opacity: 0; } }
+
+		@media (max-width: 540px) {
+			.page { padding: 54px 18px 30px; }
+			.card { min-height: calc(100svh - 84px); padding-top: 16px; }
+			.envelope-wrap { height: 190px; margin-top: 27px; }
+			.letter-peek { height: 154px; }
+			.letter-dialog { align-items: end; padding: 10px 10px max(10px, env(safe-area-inset-bottom)); }
+			.letter-sheet { max-height: 88svh; border-radius: 13px 13px 8px 8px; padding: 28px 23px 24px; }
+			.modal-close { margin: -16px -12px 0 0; }
+			.letter-copy { font-size: 1.3rem; line-height: 1.52; }
+			.letter-copy p { margin-bottom: 13px; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				scroll-behavior: auto !important;
+				animation-duration: .01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: .01ms !important;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="ambient" id="ambient" aria-hidden="true"></div>
+	<main class="page">
+		<div class="sound-control">
+			<button class="icon-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn birthday chime on">
+				<span id="sound-icon" aria-hidden="true">♫</span><span id="sound-label">Sound off</span>
+			</button>
+		</div>
+
+		<section class="card" aria-labelledby="page-title">
+			<p class="eyebrow">A little something, just for you</p>
+			<h1 id="page-title">To My Favorite Person <span aria-hidden="true">💗</span></h1>
+			<p class="subtitle">You have a special letter waiting for you…</p>
+
+			<div class="envelope-wrap">
+				<button class="envelope-button" id="open-letter" type="button" aria-label="Open your birthday letter">
+					<span class="envelope-back" aria-hidden="true"></span>
+					<span class="letter-peek" aria-hidden="true">A note for you ♡</span>
+					<span class="envelope-pocket" aria-hidden="true"></span>
+					<span class="envelope-front" aria-hidden="true"></span>
+					<span class="envelope-flap" aria-hidden="true"></span>
+					<span class="seal" aria-hidden="true">♥</span>
+					<span class="envelope-star star-one" aria-hidden="true">✦</span>
+					<span class="envelope-star star-two" aria-hidden="true">✧</span>
+					<span class="envelope-star star-three" aria-hidden="true">✦</span>
+				</button>
+			</div>
+
+			<p class="instruction">Click the envelope to open your surprise <span aria-hidden="true">💌</span></p>
+			<p class="made-with-love">Made with love, just for you <span aria-hidden="true">❤️</span></p>
+		</section>
+	</main>
+
+	<section class="letter-dialog" id="letter-dialog" role="dialog" aria-modal="true" aria-labelledby="letter-title" aria-hidden="true" hidden>
+		<article class="letter-sheet" id="letter-sheet" tabindex="-1">
+			<button class="icon-button modal-close" id="close-icon" type="button" aria-label="Close letter">×</button>
+			<p class="letter-topline">For my favorite person</p>
+			<h2 class="letter-title" id="letter-title" aria-label="My Dearest Love, 💗"><span class="typed-title" id="typed-title" aria-hidden="true"></span><span class="type-caret" aria-hidden="true"></span></h2>
+			<div class="letter-copy">
+				<p>Happy Birthday to the most precious person in my life! 🎂💖</p>
+				<p>Today is all about celebrating you, the person who makes my world brighter, my heart happier, and my life so much more beautiful. Every moment with you is a gift, and I feel so lucky to have you in my life.</p>
+				<p>You are my favorite person, my safe place, my happiness, and my sweetest dream come true. I hope this new chapter of your life brings you endless smiles, beautiful memories, success, good health, and all the love your heart can hold.</p>
+				<p>If I could give you one thing in life, I would give you the ability to see yourself through my eyes, because then you would understand just how incredibly special you are to me.</p>
+				<p>No matter how many birthdays pass, I hope I always get to celebrate you, make you smile, hold your hand, and remind you how deeply you are loved.</p>
+				<p>Happy Birthday, my love. You deserve all the beautiful things this world has to offer. 💐💕</p>
+				<p class="signoff">Forever yours,<br>Your Love ❤️</p>
+			</div>
+			<p class="surprise-message" id="surprise-message" aria-live="polite">If I could choose again, in every lifetime, I would still choose you. ❤️</p>
+			<div class="letter-actions">
+				<button class="action-button primary" id="surprise-button" type="button">One More Surprise <span aria-hidden="true">💝</span></button>
+				<button class="action-button" id="close-letter" type="button">Close Letter</button>
+			</div>
+		</article>
+	</section>
+	<div class="celebration" id="celebration" aria-hidden="true"></div>
+
+	<script>
+		const ambient = document.querySelector("#ambient");
+		const celebration = document.querySelector("#celebration");
+		const openButton = document.querySelector("#open-letter");
+		const closeButton = document.querySelector("#close-letter");
+		const closeIcon = document.querySelector("#close-icon");
+		const dialog = document.querySelector("#letter-dialog");
+		const sheet = document.querySelector("#letter-sheet");
+		const typedTitle = document.querySelector("#typed-title");
+		const surpriseButton = document.querySelector("#surprise-button");
+		const surpriseMessage = document.querySelector("#surprise-message");
+		const soundToggle = document.querySelector("#sound-toggle");
+		const soundLabel = document.querySelector("#sound-label");
+		const soundIcon = document.querySelector("#sound-icon");
+		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const titleText = "My Dearest Love, 💗";
+		let isOpen = false;
+		let soundEnabled = false;
+		let audioContext;
+		let titleTimer;
+
+		// Ambient hearts and glints are decorative and never enter the reading order.
+		function addAmbientDecorations() {
+			const hearts = ["♡", "♥", "❀"];
+			for (let index = 0; index < 15; index += 1) {
+				const heart = document.createElement("span");
+				heart.className = "floaty";
+				heart.textContent = hearts[index % hearts.length];
+				heart.style.left = `${Math.random() * 100}%`;
+				heart.style.setProperty("--duration", `${10 + Math.random() * 12}s`);
+				heart.style.setProperty("--delay", `${-Math.random() * 18}s`);
+				heart.style.setProperty("--sway", `${Math.random() * 70 - 35}px`);
+				heart.style.fontSize = `${12 + Math.random() * 14}px`;
+				ambient.append(heart);
+			}
+
+			for (let index = 0; index < 17; index += 1) {
+				const sparkle = document.createElement("span");
+				sparkle.className = "sparkle";
+				sparkle.textContent = index % 2 ? "✧" : "·";
+				sparkle.style.left = `${5 + Math.random() * 90}%`;
+				sparkle.style.top = `${5 + Math.random() * 88}%`;
+				sparkle.style.setProperty("--delay", `${Math.random() * 3}s`);
+				sparkle.style.fontSize = `${10 + Math.random() * 12}px`;
+				ambient.append(sparkle);
+			}
+		}
+
+		function burstHearts(count = 24) {
+			const hearts = ["♡", "♥", "✦", "✧", "💕"];
+			for (let index = 0; index < count; index += 1) {
+				const particle = document.createElement("span");
+				particle.className = "floaty";
+				particle.textContent = hearts[index % hearts.length];
+				particle.style.left = `${Math.random() * 100}%`;
+				particle.style.bottom = `${-10 + Math.random() * 28}%`;
+				particle.style.setProperty("--duration", `${2.8 + Math.random() * 2.2}s`);
+				particle.style.setProperty("--delay", `${Math.random() * .9}s`);
+				particle.style.setProperty("--sway", `${Math.random() * 90 - 45}px`);
+				particle.style.fontSize = `${15 + Math.random() * 18}px`;
+				celebration.append(particle);
+				window.setTimeout(() => particle.remove(), 6000);
+			}
+		}
+
+		// The short title types in while the handwritten paragraphs fade into view.
+		function typeLetterTitle() {
+			window.clearInterval(titleTimer);
+			typedTitle.textContent = "";
+			if (reducedMotion.matches) {
+				typedTitle.textContent = titleText;
+				return;
+			}
+			let position = 0;
+			titleTimer = window.setInterval(() => {
+				typedTitle.textContent = Array.from(titleText).slice(0, position + 1).join("");
+				position += 1;
+				if (position >= Array.from(titleText).length) window.clearInterval(titleTimer);
+			}, 55);
+		}
+
+		// A tiny Web Audio chime avoids loading or autoplaying an external sound file.
+		function playChime() {
+			if (!soundEnabled) return;
+			const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+			if (!AudioContextClass) return;
+			audioContext ??= new AudioContextClass();
+			if (audioContext.state === "suspended") audioContext.resume();
+			const now = audioContext.currentTime;
+			[523.25, 659.25, 783.99].forEach((frequency, index) => {
+				const oscillator = audioContext.createOscillator();
+				const gain = audioContext.createGain();
+				oscillator.type = "sine";
+				oscillator.frequency.value = frequency;
+				gain.gain.setValueAtTime(.0001, now + index * .13);
+				gain.gain.exponentialRampToValueAtTime(.055, now + index * .13 + .035);
+				gain.gain.exponentialRampToValueAtTime(.0001, now + index * .13 + .75);
+				oscillator.connect(gain);
+				gain.connect(audioContext.destination);
+				oscillator.start(now + index * .13);
+				oscillator.stop(now + index * .13 + .8);
+			});
+		}
+
+		function openLetter() {
+			if (isOpen) return;
+			isOpen = true;
+			document.body.classList.add("is-open");
+			dialog.hidden = false;
+			dialog.setAttribute("aria-hidden", "false");
+			surpriseMessage.classList.remove("is-visible");
+			surpriseButton.disabled = false;
+			surpriseButton.hidden = false;
+			surpriseButton.setAttribute("aria-expanded", "false");
+			burstHearts(22);
+			playChime();
+			window.requestAnimationFrame(() => {
+				window.setTimeout(() => {
+					dialog.classList.add("is-open");
+					typeLetterTitle();
+					sheet.focus({ preventScroll: true });
+				}, reducedMotion.matches ? 0 : 420);
+			});
+		}
+
+		function closeLetter() {
+			if (!isOpen) return;
+			isOpen = false;
+			window.clearInterval(titleTimer);
+			document.body.classList.remove("is-open");
+			dialog.classList.remove("is-open");
+			dialog.setAttribute("aria-hidden", "true");
+			surpriseMessage.classList.remove("is-visible");
+			surpriseButton.setAttribute("aria-expanded", "false");
+			window.setTimeout(() => {
+				if (!isOpen) dialog.hidden = true;
+				openButton.focus({ preventScroll: true });
+			}, reducedMotion.matches ? 0 : 600);
+		}
+
+		addAmbientDecorations();
+		openButton.addEventListener("click", openLetter);
+		closeButton.addEventListener("click", closeLetter);
+		closeIcon.addEventListener("click", closeLetter);
+		dialog.addEventListener("click", (event) => {
+			if (event.target === dialog) closeLetter();
+		});
+		document.addEventListener("keydown", (event) => {
+			if (!isOpen) return;
+			if (event.key === "Escape") {
+				closeLetter();
+				return;
+			}
+			if (event.key === "Tab") {
+				const controls = Array.from(dialog.querySelectorAll("button:not([disabled])"));
+				const firstControl = controls[0];
+				const lastControl = controls[controls.length - 1];
+				if (event.shiftKey && (document.activeElement === firstControl || document.activeElement === sheet)) {
+					event.preventDefault();
+					lastControl.focus();
+				} else if (!event.shiftKey && document.activeElement === lastControl) {
+					event.preventDefault();
+					firstControl.focus();
+				}
+			}
+		});
+
+		surpriseButton.addEventListener("click", () => {
+			surpriseMessage.classList.add("is-visible");
+			surpriseButton.disabled = true;
+			surpriseButton.hidden = true;
+			surpriseButton.setAttribute("aria-expanded", "true");
+			closeButton.focus({ preventScroll: true });
+			burstHearts(12);
+		});
+
+		soundToggle.addEventListener("click", () => {
+			soundEnabled = !soundEnabled;
+			soundToggle.setAttribute("aria-pressed", String(soundEnabled));
+			soundToggle.setAttribute("aria-label", soundEnabled ? "Turn birthday chime off" : "Turn birthday chime on");
+			soundLabel.textContent = soundEnabled ? "Sound on" : "Sound off";
+			soundIcon.textContent = soundEnabled ? "♫" : "♪";
+			if (soundEnabled && isOpen) playChime();
+		});
+	</script>
+</body>
+</html>
