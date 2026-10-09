@@ -557,13 +557,27 @@
 			box-shadow: 0 3px 10px rgba(137, 92, 111, .18);
         }
 #place2 {
-			width: 80%;
-			height: 500px;
-            object-fit: cover;
-			vertical-align: middle;
-			border: 2px solid rgba(255, 255, 255, .85);
-			box-shadow: 0 3px 10px rgba(137, 92, 111, .18);
-        }
+    width: 80%;
+    max-width: 500px;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    object-fit: cover;
+
+    display: block;
+    margin: 0 auto; /* Center horizontally */
+
+    border: 2px solid rgba(255, 255, 255, .85);
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(137, 92, 111, .18);
+}
+
+/* Center horizontally and vertically */
+#place2-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
 /* 📱 Mobile */
 @media (max-width: 600px) {
     #place2 {
