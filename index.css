@@ -557,7 +557,7 @@
 			box-shadow: 0 3px 10px rgba(137, 92, 111, .18);
         }
 #place2 {
-			width: 500px;
+			width: 80%;
 			height: 500px;
             object-fit: cover;
 			vertical-align: middle;
